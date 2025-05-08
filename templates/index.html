@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Economics Quiz</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Economics Quiz</h1>
+        
+        {% if not show_results %}
+        <form method="POST">
+            {% for q_id, question in questions.items() %}
+            <div class="question">
+                <p>{{ q_id }}. {{ question['text'] }}</p>
+                <div class="options">
+                    <label>
+                        <input type="radio" name="q{{ q_id }}" value="True" required> True
+                    </label>
+                    <label>
+                        <input type="radio" name="q{{ q_id }}" value="False"> False
+                    </label>
+                </div>
+            </div>
+            {% endfor %}
+            <button type="submit">Submit Answers</button>
+        </form>
+        {% else %}
+        <div class="results">
+            <h2>Your Score: {{ score }}/{{ total }}</h2>
+            
+            {% for q_id, result in results.items() %}
+            <div class="question-result {% if result['correct'] %}correct{% else %}incorrect{% endif %}">
+                <p><strong>Question {{ q_id }}:</strong> {{ questions[q_id]['text'] }}</p>
+                <p>Your answer: {{ result['user_answer'] }} 
+                    ({% if result['correct'] %}Correct{% else %}Incorrect - correct answer was {{ questions[q_id]['answer'] }}{% endif %})</p>
+                {% if result['explanation'] %}
+                <p class="explanation">{{ result['explanation'] }}</p>
+                {% endif %}
+            </div>
+            {% endfor %}
+            
+            <a href="{{ url_for('quiz') }}" class="retry-btn">Try Again</a>
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html>
